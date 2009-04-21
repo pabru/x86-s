@@ -27,7 +27,7 @@ The sources of the C compiler (`cc') and the assembler and loader
 (`asld') are not included in the distribution.
 
 
-		3 THE MINIX ASSEMBLER
+			3 THE MINIX ASSEMBLER
 
 The assembler plays an important role in the MINIX operating
 system. There are no object files in the system.  The C compiler
@@ -215,7 +215,10 @@ of the assembler. If you give an instruction like `add al,bl' (when
 actually the instruction should have been `addb al,bl'), the assembler
 silently accepts it and generates the instruction `add ax,bx' which is
 wrong. `asm' reports errors whenever the operand sizes do not match
-the mnemonics.  10 STRING TABLE
+the mnemonics.  
+
+
+			   10 STRING TABLE
 
 The string table, in spite of its name doesn't mean a table. It means
 string space. Keeping any string fixed size meant that there would be
@@ -243,7 +246,7 @@ At present the things stored in the symbol table are the names of the
 files being assembled, the names of the symbols (assembler generated
 as well as user specified) and the compiled expressions.
 
-			11 EXPRESSIONS
+			    11 EXPRESSIONS
 
 In assembly you keep encoutering assemble time expressions.  These
 range from constant equates to complex operands.  Expressions can
@@ -657,7 +660,78 @@ done. I found one mistake in the symbol table (sub always got
 translated to subb). THe possibility of more errors in the symbols
 cannot be ruled out.
 
-			   REFERENCES
+
+			       18 USAGE
+
+The source is distributed as one .COM file and a bunch of .s
+(assembly) and .i (include) files.  It takes one filename as an
+argument (with an optional .s suffix).  There are no other arguments.
+
+To rebuild the assembler:
+
+  C:> asm asm
+
+This produces 2 files. asm.com (which is overwritten) and asm.lst 
+which contains the symbol references.   
+
+The .lst is a binary file.  See symtab.s for a description of it's
+contents.  You need to build the lister utility to read it.
+
+  C:> asm lister
+
+This creates a file called lister.com.    The usage for lister is
+
+   lister [-xz] <filename.lst>
+
+Only one of -x or -z must be specified.  The -x option prints a
+complete xref dump (definitions + references) The -z option prints a
+list of labels that were not referenced anywhere.
+
+
+
+
+e.g.
+   
+To print labels not referenced
+
+C:> lister -z asm.lst
+....
+DisplaySignedAX               display.s    11    Label  115D 4445  
+PadWithSpaces                 display.s    90    Label  11D2 4562  
+DisplayRegister               display.s    113   Label  11F4 4596  
+....
+
+Format is:
+Symbol-Name File-Name Line-No. Symbol-Type Value-Hex Value-Decimal
+
+
+To print all defined symbols:
+C:> lister asm.lst
+....
+PathSize                      asm.s        2     Equate 0040 64    
+BufferSize                    asm.s        3     Equate 0014 20    
+WordSize                      asm.s        4     Equate 0020 32    
+....
+
+Format is:
+Symbol-Name File-Name Line-No. Number-of-Refs Symbol-Type Value-Hex Value-Dec
+
+
+To print crossreferences:
+C:> lister -x asm.lst
+....
+PathSize                      asm.s        2     Equate 0040 64    
+  asm.s        148   
+  asm.s        153   
+  2      references found
+...
+ 
+
+Format is:
+Def: Symbol-Name File-Name Line-No. Number-of-Refs Symbol-Type Value-Hex Value-Dec
+Ref:    File-Name   Line-No.
+
+			      REFERENCES
 
 1. Tannenbaum A S, "Operating Systems : Design and
    Implementation", Prentice Hall of India, New Delhi,
