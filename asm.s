@@ -1,5 +1,10 @@
 |Author Venkataraman I.V.
-| Version 1.7
+| Version 1.8	7295 bytes
+| 1. Stole a few bytes by defining the extensions as words in ax before 
+|    storing them
+|
+|
+| Version 1.7	7305 bytes
 | 1. Added the binary operator !, which takes two byte constants and
 |    makes them into a word
 | 2. Fixed bugs with the ! operator (lower byte duplicated)
@@ -188,10 +193,8 @@ FoundFilenameEnd:                     |Here we are at the end of the name
   dec  di                             |Adjust, 'cos even the carriage retn
   orb  cl,cl                          |or white space is in. If there was
   jnz  NoNeedToPutExtension           |an extension don't put another
-  movb al,#'.'                        |store an extension after the name
-  stosb                               |First put a . after the name
-  movb al,#'s'                        |and then append an 's' to the name
-  stosb                               |
+  mov  ax,#'s'!'.'                    |store an extension after the name
+  stosw                               |'.s'
 NoNeedToPutExtension:                 |Terminate the name with a zero
   movb al,#0                          |character, C and DOS style
   stosb                               |store the zero
@@ -260,14 +263,10 @@ ConstructOutputFileNames:
   mov  OutputFileNameOffset,di
   rep
   movsb
-  movb al,#'.'
-  stosb
-  movb al,#'c'
-  stosb
-  movb  al,#'o'
-  stosb
-  movb  al,#'m'
-  stosb
+  mov  ax,#'c'!'.'
+  stosw
+  mov  ax,#'m'!'o'
+  stosw
   xorb  al,al
   stosb
   mov   si,PresentFileNameOffset
@@ -275,14 +274,10 @@ ConstructOutputFileNames:
   mov   ListFileNameOffset,di
   rep
   movsb
-  movb  al,#'.'
-  stosb
-  movb  al,#'l'
-  stosb
-  movb  al,#'s'
-  stosb
-  movb  al,#'t'
-  stosb
+  mov   ax,#'l'!'.'
+  stosw
+  mov   ax,#'t'!'s'
+  stosw
   xorb  al,al
   stosb
   call  CheckStringTableOverflow

@@ -15,13 +15,13 @@
 |    -z to list only unreferenced symbols
 |
 |Usage
-|	lister filename
+|       lister filename
 |
 |No default extension is assumed, the file, as specified should exist
 |
-CR		= 13
+CR              = 13
 
-FileNameSize    = 13		|these include one more space
+FileNameSize    = 13            |these include one more space
 LineNumberSize  =  6
 SymbolSize      = 30
 
@@ -97,7 +97,7 @@ DisplayPaddedSymbol:
   movb al,#SymbolSize
   jmps OtherPaddedDisplay
 DisplayPaddedFileName:
-  movb al,#FileNameSize		|Chars for the filename
+  movb al,#FileNameSize         |Chars for the filename
 OtherPaddedDisplay:
   call DisplayOtherMessage
 PaddedDisplayEnd:
@@ -106,7 +106,7 @@ PaddedDisplayEnd:
 
 DisplayPaddedLineNumber:
   call DisplayAXInDecimal
-  movb al,#LineNumberSize	|Chars for the line number
+  movb al,#LineNumberSize       |Chars for the line number
   jmps PaddedDisplayEnd
 
 DisplaySymbolEntry:
@@ -134,7 +134,7 @@ ListNotLabel:
   .asciz "Equate"
   jmps ListTypeDone
 ListTypeDone:
-  movb al,#7			|Chars for description
+  movb al,#7                    |Chars for description
   call PadWithSpaces
 
   mov  ax,Value[si]
@@ -171,7 +171,7 @@ DontDisplayReferenceCount:
   pop  si
   cmpb Option,#'z'
   jnz  DontDisplayZeroRef
-  call DisplayZeroReferenceSymbol	|On for listing unreferreds
+  call DisplayZeroReferenceSymbol       |On for listing unreferreds
 DontDisplayZeroRef:
   ret
 
@@ -275,7 +275,7 @@ AdjustTables:
 
 AdjustSymbolTable:
   mov  si,ListSymbolTableStart
-  mov  cx,ListStringTableStart		|find the diff in the positions
+  mov  cx,ListStringTableStart          |find the diff in the positions
   sub  cx,AsmStringTableStart
 MoreSymbolEntriesToAdjust:
   cmp  si,ListSymbolTableEnd
@@ -358,12 +358,12 @@ CloseInputFile:
 | al : for temp storage.
 
 GetInputFileName:
-  mov  si,#CommandLineStart
+  mov  si,#CommandLineStart 
 SkipCommandLineSpaces:
   lodsb
   cmpb al,#' '
   jz   SkipCommandLineSpaces
-  cmpb al,#'	'
+  cmpb al,#9
   jz   SkipCommandLineSpaces
   cmpb al,#CR
   jz   Usage
@@ -375,7 +375,7 @@ MoreCharsInFileName:
   lodsb
   cmpb al,#' '
   jz   EndOfFileNameFound
-  cmpb al,#'	'
+  cmpb al,#9
   jz   EndOfFileNameFound
   cmpb al,#CR
   jnz  MoreCharsInFileName
@@ -422,7 +422,7 @@ CorruptListFileMessage:
   .asciz  "The List file is corrupt! Can't analyze"
 InvalidOptionMessage:
   .asciz  "The valid options are only x or z"
-Data:
+|Data
 InputFileHandle:
   .word 0
 AsmSymbolTableStart:
