@@ -160,15 +160,15 @@ FindFakeEnd:
 
 |WriteListFile, writes the list file out the format of the list file is
 |
-|1.Symbol table start 	:word	as in the assembler
-|2.Symbol table end	:word   points to one byte past the true end.
-|3.Symbol table		:2 - 1  bytes of data, raw symbol table
-|4.String table start	:word   as in the assembler
-|5.String table end 	:word   points to one past the end.
-|6.String table		:5 - 4  bytes of data, raw string table
+|1.Symbol table start   :word   as in the assembler
+|2.Symbol table end     :word   points to one byte past the true end.
+|3.Symbol table         :2 - 1  bytes of data, raw symbol table
+|4.String table start   :word   as in the assembler
+|5.String table end     :word   points to one past the end.
+|6.String table         :5 - 4  bytes of data, raw string table
 
 WriteListFile:
-  mov  ax,#0			|Terminate the xref list in the list file
+  mov  ax,#0                    |Terminate the xref list in the list file
   call WriteListWord
   mov  ax,#SymTabStart
   call WriteListWord
@@ -320,7 +320,7 @@ DoneFixes:
 
 AddOffEnt:
   push di
-  mov  di,EmptyOffent			
+  mov  di,EmptyOffent                   
   stosw
   mov  ax,LocationCounter
   add  ax,bx
@@ -369,7 +369,9 @@ bytepatch:
   sub  ax,#OutputStart
   sub  ax,Value[bx]
   neg  ax
-  orb  ah,ah
+  rolb al
+  rorb al
+  adcb ah,#0
   jnz  JumpOutOfRange
   movb [di],al
   jmps NextOffent
