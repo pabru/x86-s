@@ -1,10 +1,16 @@
 |Author Venkataraman I.V.
-| Version 1.8	7295 bytes
+| Version 1.9   7297 bytes
+| 1. Fixed a dangerous bug - forward relative jumps of (128-255) were
+|    being allowed and actually coded as 0x80 to 0xFF, which worked
+|    out to be backward jumps - symtab.s
+|
+|
+| Version 1.8   7295 bytes
 | 1. Stole a few bytes by defining the extensions as words in ax before 
 |    storing them
 |
 |
-| Version 1.7	7305 bytes
+| Version 1.7   7305 bytes
 | 1. Added the binary operator !, which takes two byte constants and
 |    makes them into a word
 | 2. Fixed bugs with the ! operator (lower byte duplicated)
@@ -112,13 +118,13 @@ SegReg    = 3
 Immediate = 4
 AddMode   = 5
 Disp      = 6
-|AddDisp   = 7			|Isn't ever used!
+|AddDisp   = 7                  |Isn't ever used!
 
 CR    = 13
 LF    = 10
 
   call GetFileName                      |Get the name of the file to be
-                                        |assembled into PresentFilename
+					|assembled into PresentFilename
   call InitSymbolTable
   call AssembleOneFile
   jmp  ExitToDos                        |Get back to DOS
@@ -150,34 +156,34 @@ SkipCommandLineSpaces:                  |
   lodsb                                 |Get more chars from the command line
   cmpb al,#' '                          |Skip spaces at start of name
   jz   SkipCommandLineSpaces            |Any number of them
-  cmpb al,#'	'                       |Also skip tabs
+  cmpb al,#'    '                       |Also skip tabs
   jz   SkipCommandLineSpaces            |
   cmpb al,#CR
   jz   ReportNoName
   mov  di,StringSpace                   |Copy the name into the StringSpace
-  mov  PresentFileNameOffset,di		|
+  mov  PresentFileNameOffset,di         |
   stosb                                 |done by string insts.
   mov  bx,si                            |To display of the filename.
   dec  bx                               |Actually si is pointing at one
-                                        |past the start of the filename.
+					|past the start of the filename.
   xorb cl,cl                            |cl is whether the filename
-                                        |given had an extension or not.
-                                        |If there was no extension then we
-                                        |have to put a .s after it.
-                                        | We assume that there is
-                                        |enough space to do such a thing
-                                        |in the command line.
+					|given had an extension or not.
+					|If there was no extension then we
+					|have to put a .s after it.
+					| We assume that there is
+					|enough space to do such a thing
+					|in the command line.
 FindCommandLineCR:                      |white spaces after the name of the
   lodsb                                 |should be removed
   stosb                                 |Keep Storing the name
-  cmpb al,#' '	                        |it means that that was the end of
+  cmpb al,#' '                          |it means that that was the end of
   jz   FoundFilenameEnd                   |the filename
-  cmpb al,#'	'                       |This is true for tabs too
+  cmpb al,#'    '                       |This is true for tabs too
   jz   FoundFilenameEnd|                |If a '.' is found, it means that
   cmpb al,#'.'                          |an extension need not be added to
   jnz  NotTheDotInFilename              |to the filename
   incb cl                               |record the fact in cl that a dot
-                                        |has been seen in the input name
+					|has been seen in the input name
 NotTheDotInFilename:
   cmpb al,#'/'                    |reset the dot if a path separator
   jnz  NotSlashinFilename               |is found
@@ -232,10 +238,10 @@ OpenInputFile:
   mov  dx,PresentFileNameOffset
   int  #DosInterrupt
   jc   CouldNotOpenFile
-  mov  InputFileHandle,ax  		|Preserving Carry dangerous stuff
+  mov  InputFileHandle,ax               |Preserving Carry dangerous stuff
   mov  InputLineNumber,#1
   mov  ax,#0
-  mov  InputBufferReadPtr,ax		|Both Should be the same
+  mov  InputBufferReadPtr,ax            |Both Should be the same
   mov  InputBufferEndPtr,ax  
 CouldNotOpenFile:
   ret
@@ -258,7 +264,7 @@ ConstructOutputFileNames:
   mov  si,PresentFileNameOffset
   mov  cx,di
   sub  cx,si
-  mov  dx,cx			|save offset for list file opening
+  mov  dx,cx                    |save offset for list file opening
   mov  di,StringSpace
   mov  OutputFileNameOffset,di
   rep

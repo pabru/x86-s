@@ -87,7 +87,7 @@ Add3:
 Add3End:
   call IsFirstReg
   jc   FirstWasRegister
-  push ax			|Second is a register
+  push ax                       |Second is a register
   movb  al,dl
   call OutputByte
   pop  ax
@@ -118,7 +118,7 @@ SpecialAdd3:
   ret
 
 AdjustImmediate:
-  orb 	ch,ch
+  orb   ch,ch
   jz    ImmediateAdjustEnd
   movb   bl,[si]
   andb   bl,#1
@@ -405,7 +405,7 @@ SizeOK:
   ret
 VariableNotSmallEnough:
   cmpb ah,#0xFF
-  jz   SizeOK			|was checking of Msbit, disabled
+  jz   SizeOK                   |was checking of Msbit, disabled
 VariableTooLarge:
   mov  bx,#LargeOperandMessage
   call PanicRecover
@@ -427,11 +427,9 @@ OneRelativeLabel:
   add  ax,#1
   sub  ax,bx
   neg  ax
-  add  ax,#128
-  orb   ah,ah
-  pushf
-  sub  ax,#128
-  popf
+  rolb al
+  rorb al
+  adcb ah,#0
   jz   InrelRange
   jmp  VariableTooLarge
 InrelRange:
@@ -727,7 +725,7 @@ isEOL:
 
 isEOL1:
   push ax
-  xorb al,al	|set the zero flag
+  xorb al,al    |set the zero flag
   pop  ax
   ret
 
