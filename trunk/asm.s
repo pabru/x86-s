@@ -51,7 +51,7 @@ SkipCommandLineSpaces:                  |
   lodsb                                 |Get more chars from the command line
   cmpb al,#' '                          |Skip spaces at start of name
   jz   SkipCommandLineSpaces            |Any number of them
-  cmpb al,#'    '                       |Also skip tabs
+  cmpb al,#'	'                       |Also skip tabs
   jz   SkipCommandLineSpaces            |
   cmpb al,#CR
   jz   ReportNoName
@@ -73,7 +73,7 @@ FindCommandLineCR:                      |white spaces after the name of the
   stosb                                 |Keep Storing the name
   cmpb al,#' '                          |it means that that was the end of
   jz   FoundFilenameEnd                   |the filename
-  cmpb al,#'    '                       |This is true for tabs too
+  cmpb al,#'	'                       |This is true for tabs too
   jz   FoundFilenameEnd|                |If a '.' is found, it means that
   cmpb al,#'.'                          |an extension need not be added to
   jnz  NotTheDotInFilename              |to the filename
