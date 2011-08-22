@@ -1,4 +1,4 @@
-Copyright (c) 1991-2009, Venkat Iyer
+Copyright (c) 1991-2011, Venkat Iyer <venksi@gmail.com>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

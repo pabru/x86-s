@@ -126,6 +126,10 @@ NonAlphaNumeric:
 OnlyThisChar:
   cmpb  al,#'|'
   jz   CommentStartIgnore
+  cmpb  al,#CR
+  jz   CommentStartIgnore
+  cmpb  al,#LF	
+  jz   CommentStartIgnore
   stosb
   clc
   jmps GetTokenEnd
@@ -274,6 +278,7 @@ NotYetEofForEol:
   jz   GetEndOfLine1              |Discard any carriage returns that
   cmpb  al,#LF                           |were there in the input. So also
   jnz  NoLine                           |the line feeds
+EolHaveLF:	
   inc  bp
   inc  InputLineNumber
   jmps GetEndOfLine1
@@ -299,9 +304,7 @@ CommentStarted:                         |A UNIX pipe character was found
   jz   GetEndOfLine1                    |it means that the comment ended
   cmpb  al,#LF                           |So also for a linefeed (MINIX)
   jnz  CommentStarted                   |So we start processing the next line
-  inc  InputLineNumber
-  jmps GetEndOfLine1              |Else we continue till the end of
-                                        |this line.
+  jmps EolHaveLF
 
 |This function reads a character from a file, The input is buffered by the
 |InputBuffer. The function keeps track of where it is by keeping two pointers.
