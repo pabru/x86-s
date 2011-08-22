@@ -1,8 +1,11 @@
+Version 1.10 - 7301 bytes
+1. Fix handling of LF only files.  Seems to have been broken for
+   many versions now.
+
 Version 1.9   7297 bytes
 1. Fixed a dangerous bug - forward relative jumps of (128-255) were
    being allowed and actually coded as 0x80 to 0xFF, which worked
    out to be backward jumps - symtab.s
-
 
 Version 1.8   7295 bytes
 1. Stole a few bytes by defining the extensions as words in ax before 
